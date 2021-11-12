@@ -1,0 +1,25 @@
+'trainingsstunden': [
+    1.5, 
+    0.0, 
+    0.0, 
+    0.0, 
+    0.0, 
+    0.0,
+    0.0
+]
+'vorname':            'Max'
+'nachname':           'Mustermann'
+'trainer_adresse': {
+  'street':           'Hauptstraße 1',
+  'zip-code':         '12345',
+  'city':             'Bremen'
+}
+'work_location':      'Sportstr.'
+'bank': {
+  'iban':             'DE50123456789123456789',
+  'bank_name':        'Lieblingsbank',
+  'owner_name':       'Max Mustermann'
+}
+'organisation_title': 'Sportgemeinschaft Aumund-Vegesack e.V.'
+'group_title':        'Abteilung Judo Ju-Jutsu Jiu-Jitsu'
+'sub_title':          'Abrechnung für Trainer, Übungsleiter und Ko-Trainer'
