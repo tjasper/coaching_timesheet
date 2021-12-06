@@ -255,12 +255,16 @@ def main() -> int:
     global start_date
     global end_date
 
-    # load profile
-    if len(sys.argv) > 1:
-        profile_path = str(sys.argv[1])
+    # handle parameters
     if len(sys.argv) > 3:
         start_date = dateFromStr(sys.argv[2])
         end_date = dateFromStr(sys.argv[3])
+    elif len(sys.argv) > 2:
+        start_date = dateFromStr(sys.argv[1])
+        end_date = dateFromStr(sys.argv[2])
+    elif len(sys.argv) > 1:
+        profile_path = str(sys.argv[1])
+    
     importProfile()
 
     # calculation
