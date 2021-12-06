@@ -49,12 +49,13 @@ def importProfile():
             print(exc)
 
 ### returns holidays as list od date ranges
-### hardcoded for school holidays in Bremen
+### hardcoded for school holidays + state holidaysin Bremen
 def tryToGetHolidays():
     holidays = [] # list of ranges
 
-    # TODO hardcoded year
-    response = requests.get('https://ferien-api.de/api/v1/holidays/HB/2021')
+    # access shool holidays
+    # TODO hardoded for country hb
+    response = requests.get('https://ferien-api.de/api/v1/holidays/HB/'+str(start_date[:4]))
     if response.status_code == 200:
         cont = json.loads(response.content.decode('utf-8'))
         print('-------------- found following holidays: --------------')
@@ -62,9 +63,24 @@ def tryToGetHolidays():
             range = datetimerange.DateTimeRange(d['start'],d['end'])
             holidays.append(range)
             print(d['name'] + '\n' + str(range))
-        return holidays
     else:
-        raise ValueError("Error could not access holiday data. Make sure you have access to the internet")
+        raise ValueError("Error could not access holiday data1. Make sure you have access to the internet")
+
+    # access holidays
+    response = requests.get('https://get.api-feiertage.de/?years='+str(start_date[:4]))
+    if response.status_code == 200:
+        cont = json.loads(response.content.decode('utf-8'))
+        if cont['status'] != 'success':
+            raise ValueError("Error something went wrong while access holidays2")
+        for d in cont['feiertage']:
+            if str(d['hb']) == '1': # TODO hardoded for country hb
+                range = datetimerange.DateTimeRange(dateFromStr(d['date']),dateFromStr(d['date'])) # TODO checki f this works as expected
+                holidays.append(range)
+                print(d['fname'] + '\n' + str(range))
+    else:
+        raise ValueError("Error could not access holiday data2. Make sure you have access to the internet")
+
+    return holidays
 
 ### returns a list of days in given range which are are not the holidays 
 def cleanedDays(all_days_range):
@@ -92,9 +108,9 @@ def allDaysRange():
     global start_date
     global end_date
     if start_date == '' or end_date == '':
-        print('WARNING: use this complete year as date range')
+        print('WARNING: using this complete year as date range')
         yyyy = str(datetime.datetime.today().year)
-        return datetimerange.DateTimeRange(dateFromStr('01.01.'+yyyy), dateFromStr('31.12.'+yyyy))
+        return datetimerange.DateTimeRange(dateFromStr('01.01.'+yyyy), dateFromStr('30.12.'+yyyy))
     else:
         return datetimerange.DateTimeRange(start_date, end_date)
 
@@ -102,14 +118,21 @@ def dateStr(date):
     return str(date.day)+'.'+str(date.month)+'.'+str(date.year)
 
 ###
-### converts strings like 'DD.MM.YYYY' to time object strings like 'YYYY-MM-DDT00:00:00+0900'
+### converts strings like
+### 'DD.MM.YYYY' or 'YYYY-MM-DD'
+### to time object strings like 'YYYY-MM-DDT00:00:00+0900'
 ###
 def dateFromStr(date_str):
     d = 'T00:00:00+0900'
     d_arr = date_str.split('.')
-    if len(d_arr) != 3 or len(d_arr[0]) != 2 or len(d_arr[1]) != 2 or len(d_arr[2]) != 4:
-        raise ValueError("Error could not read "+date_str+' make sure you wrote dates in DD.MM.YYYY format')
-    return d_arr[2]+d_arr[1]+d_arr[0]+d
+    if len(d_arr) == 3 and len(d_arr[0]) == 2 and len(d_arr[1]) == 2 and len(d_arr[2]) == 4:
+        return d_arr[2]+'-'+d_arr[1]+'-'+d_arr[0]+d
+    d_arr = date_str.split('-')
+    if len(d_arr) == 3 and len(d_arr[0]) == 4 and len(d_arr[1]) == 2 or len(d_arr[2]) == 2:
+        return d_arr[0]+'-'+d_arr[1]+'-'+d_arr[2]+d
+    else:
+        raise ValueError("Error could not read "+date_str+' make sure you wrote dates in DD.MM.YYYY or YYYY-MM-DD format')
+    
 
 ### returns [training times, hours] (if >0 hours)
 ### this list should be ready to print
