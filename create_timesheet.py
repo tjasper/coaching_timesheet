@@ -15,8 +15,10 @@ sub_title = 'Abrechnung für Trainer, Übungsleiter und Ko-Trainer'
 trainer_name = {'first_name':'Max', 'family_name':'Mustermann'}
 trainer_adress = {'street':'Hauptstraße 1', 'zip-code':'12345', 'city':'Bremen'}
 work_location = 'Turnhallenstr.'
-trainer_bank = {'iban':'DE012345678', 'bank_name':'', 'owner_name':'Max Mustermann'}
+trainer_bank = {'iban':'DE012345678', 'bank_name':'', 'bic':'', 'owner_name':'Max Mustermann'}
 hours_per_day = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+start_date = '' # 'YYYY-MM-DDT00:00:00+0900' format
+end_date = '' # 'YYYY-MM-DDT00:00:00+0900' format
     
 
 def importProfile():
@@ -42,7 +44,7 @@ def importProfile():
             work_location = profile['work_location']
             trainer_bank = profile['bank']
             hours_per_day = profile['trainingsstunden']
-            fileName = trainer_name['family_name']+fileName
+            fileName = str(trainer_name['family_name'])+'_'+fileName
         except yaml.YAMLError as exc:
             print(exc)
 
@@ -62,8 +64,7 @@ def tryToGetHolidays():
             print(d['name'] + '\n' + str(range))
         return holidays
     else:
-        print("Error could not load holidays")
-        return None
+        raise ValueError("Error could not access holiday data. Make sure you have access to the internet")
 
 ### returns a list of days in given range which are are not the holidays 
 def cleanedDays(all_days_range):
@@ -88,12 +89,27 @@ def cleanedDays(all_days_range):
     return cleaned_days
 
 def allDaysRange():
-    #TODO read dates from ui
-    range = datetimerange.DateTimeRange("2021-01-01T00:00:00+0900", "2021-12-31T00:00:00+0900")    
-    return range
+    global start_date
+    global end_date
+    if start_date == '' or end_date == '':
+        print('WARNING: use this complete year as date range')
+        yyyy = str(datetime.datetime.today().year)
+        return datetimerange.DateTimeRange(dateFromStr('01.01.'+yyyy), dateFromStr('31.12.'+yyyy))
+    else:
+        return datetimerange.DateTimeRange(start_date, end_date)
 
 def dateStr(date):
     return str(date.day)+'.'+str(date.month)+'.'+str(date.year)
+
+###
+### converts strings like 'DD.MM.YYYY' to time object strings like 'YYYY-MM-DDT00:00:00+0900'
+###
+def dateFromStr(date_str):
+    d = 'T00:00:00+0900'
+    d_arr = date_str.split('.')
+    if len(d_arr) != 3 or len(d_arr[0]) != 2 or len(d_arr[1]) != 2 or len(d_arr[2]) != 4:
+        raise ValueError("Error could not read "+date_str+' make sure you wrote dates in DD.MM.YYYY format')
+    return d_arr[2]+d_arr[1]+d_arr[0]+d
 
 ### returns [training times, hours] (if >0 hours)
 ### this list should be ready to print
@@ -189,13 +205,15 @@ def drawTimes(pdf, training_times, start_x=75, start_y=600, row_dist=15, col_dis
 def drawPaymentInfo(pdf):
     # bank data
     pdf.setFont("Helvetica", 10)
-    pdf.drawString(75, 135, 'Bankinstitut:')
-    pdf.drawString(75, 120, 'IBAN:')
-    pdf.drawString(300, 135, 'Kontoinhaber:')
+    pdf.drawString(75, 135, 'BIC:')
+    pdf.drawString(75, 120, 'Bankinstitut:')
+    pdf.drawString(300, 135, 'IBAN:')
+    pdf.drawString(300, 120, 'Kontoinhaber:')
     pdf.setFont("Helvetica-Bold", 8)
-    pdf.drawString(145, 135, trainer_bank['bank_name'])
-    pdf.drawString(145, 120, trainer_bank['iban'])
-    pdf.drawString(375, 135, trainer_bank['owner_name'])
+    pdf.drawString(145, 135, trainer_bank['bic'])
+    pdf.drawString(145, 120, trainer_bank['bank_name'])
+    pdf.drawString(375, 135, trainer_bank['iban'])
+    pdf.drawString(375, 120, trainer_bank['owner_name'])
     # signature ül
     pdf.setFont("Helvetica", 10)
     pdf.drawString(75, 100, trainer_adress['city'] + ', ' + dateStr(datetime.datetime.today()))
@@ -210,10 +228,16 @@ def drawPaymentInfo(pdf):
 
 def main() -> int:
     global profile_path
+    global fileName
+    global start_date
+    global end_date
 
     # load profile
     if len(sys.argv) > 1:
         profile_path = str(sys.argv[1])
+    if len(sys.argv) > 3:
+        start_date = dateFromStr(sys.argv[2])
+        end_date = dateFromStr(sys.argv[3])
     importProfile()
 
     # calculation
