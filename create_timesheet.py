@@ -32,7 +32,8 @@ def importProfile():
     global hours_per_day
     global fileName
     profile = None
-    with open(profile_path, "r") as stream:
+    
+    with open(profile_path, "r", encoding='utf8') as stream:
         try:
             profile = yaml.safe_load(stream)
 
