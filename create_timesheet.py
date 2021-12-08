@@ -116,7 +116,9 @@ def allDaysRange():
         return datetimerange.DateTimeRange(start_date, end_date)
 
 def dateStr(date):
-    return str(date.day)+'.'+str(date.month)+'.'+str(date.year)
+    day = str(date.day) if len(str(date.day)) > 1 else '0'+str(date.day)
+    month = str(date.month) if len(str(date.month)) > 1 else '0'+str(date.month)
+    return day+'.'+month+'.'+str(date.year)
 
 ###
 ### converts strings like
