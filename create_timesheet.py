@@ -260,6 +260,7 @@ def main() -> int:
 
     # handle parameters
     if len(sys.argv) > 3:
+        profile_path = str(sys.argv[1])
         start_date = dateFromStr(sys.argv[2])
         end_date = dateFromStr(sys.argv[3])
     elif len(sys.argv) > 2:
