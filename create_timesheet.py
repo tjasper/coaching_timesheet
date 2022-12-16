@@ -218,19 +218,19 @@ def rectangle(pdf, start_pos, end_pos, offset=[-2., -5.]):
 # all the timestamps are drawn relative to the start x,y position
 
 
-def drawTimes(pdf, training_times, start_x=75, start_y=600, row_dist=15, col_dist=115):
+def drawTimes(pdf, training_times, start_x=75, start_y=600, row_dist=15, col_dist=90):
     no_max_rows = 25  # start new col after this
     x = 0
     y = 0
 
     pdf.setFont("Helvetica", 8)
-    pdf.drawCentredString(300, start_y+(2*row_dist),
-                          'Abzurechnende Übungsstunden (1 Ü-Einheit = 60 Minuten)')
+    #pdf.drawCentredString(300, start_y+(2*row_dist),
+    #                      'Abzurechnende Übungsstunden (1 Ü-Einheit = 60 Minuten)')
 
     # first head
     pdf.setFont("Helvetica-Bold", 10)
     pdf.drawString(start_x+x, start_y+row_dist, '    Tag')
-    pdf.drawString(start_x+x+(0.45*col_dist), start_y+row_dist, 'Ü-Einheiten')
+    pdf.drawString(start_x+x+(0.7*col_dist), start_y+row_dist, 'Std.')
     rectangle(pdf, [start_x+x, start_y+2*row_dist],
               [start_x+x+(col_dist), start_y])
 
@@ -249,8 +249,8 @@ def drawTimes(pdf, training_times, start_x=75, start_y=600, row_dist=15, col_dis
             y = 0
             pdf.setFont("Helvetica-Bold", 10)
             pdf.drawString(start_x+x, start_y+row_dist, '    Tag')
-            pdf.drawString(start_x+x+(0.45*col_dist),
-                           start_y+row_dist, 'Ü-Einheiten')
+            pdf.drawString(start_x+x+(0.7*col_dist),
+                           start_y+row_dist, 'Std.')
             rectangle(pdf, [start_x+x, start_y+2*row_dist],
                       [start_x+x+(col_dist), start_y])
     # draw sum
