@@ -224,7 +224,7 @@ def drawTimes(pdf, training_times, start_x=75, start_y=600, row_dist=15, col_dis
     y = 0
 
     pdf.setFont("Helvetica", 8)
-    #pdf.drawCentredString(300, start_y+(2*row_dist),
+    # pdf.drawCentredString(300, start_y+(2*row_dist),
     #                      'Abzurechnende Übungsstunden (1 Ü-Einheit = 60 Minuten)')
 
     # first head
@@ -262,25 +262,25 @@ def drawTimes(pdf, training_times, start_x=75, start_y=600, row_dist=15, col_dis
 def drawPaymentInfo(pdf):
     # bank data
     pdf.setFont("Helvetica", 10)
-    pdf.drawString(75, 135, 'BIC:')
-    pdf.drawString(75, 120, 'Bankinstitut:')
-    pdf.drawString(300, 135, 'IBAN:')
-    pdf.drawString(300, 120, 'Kontoinhaber:')
+    pdf.drawString(75, 165, 'BIC:')
+    pdf.drawString(75, 150, 'Bankinstitut:')
+    pdf.drawString(300, 165, 'IBAN:')
+    pdf.drawString(300, 150, 'Kontoinhaber:')
     pdf.setFont("Helvetica-Bold", 8)
-    pdf.drawString(145, 135, trainer_bank['bic'])
-    pdf.drawString(145, 120, trainer_bank['bank_name'])
-    pdf.drawString(375, 135, trainer_bank['iban'])
-    pdf.drawString(375, 120, trainer_bank['owner_name'])
+    pdf.drawString(145, 165, trainer_bank['bic'])
+    pdf.drawString(145, 150, trainer_bank['bank_name'])
+    pdf.drawString(375, 165, trainer_bank['iban'])
+    pdf.drawString(375, 150, trainer_bank['owner_name'])
     # signature ül
     pdf.setFont("Helvetica", 10)
     pdf.drawString(
-        75, 100, trainer_adress['city'] + ', ' + dateStr(datetime.datetime.today()))
-    pdf.line(75, 96, 280, 96)
+        75, 110, trainer_adress['city'] + ', ' + dateStr(datetime.datetime.today()))
+    pdf.line(75, 100, 280, 100)
     pdf.setFont("Helvetica", 5)
     pdf.drawString(235, 90, '(Übungsleiter)')
     # signature al
     pdf.setFont("Helvetica", 10)
-    pdf.line(300, 96, 500, 96)
+    pdf.line(300, 100, 500, 100)
     pdf.setFont("Helvetica", 5)
     pdf.drawString(450, 90, '(Abteilungsleitung)')
 
