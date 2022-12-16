@@ -282,7 +282,13 @@ def drawPaymentInfo(pdf):
     pdf.setFont("Helvetica", 10)
     pdf.line(300, 100, 500, 100)
     pdf.setFont("Helvetica", 5)
-    pdf.drawString(450, 90, '(Abteilungsleitung)')
+    #pdf.drawString(450, 90, '(Abteilungsleitung)')
+
+
+def drawSignature(pdf):
+    signature = "./unterschrift.png"
+    pdf.drawImage(signature, 170, -460, width=120,
+                  preserveAspectRatio=True, mask='auto')
 
 
 def main() -> int:
@@ -315,6 +321,7 @@ def main() -> int:
     drawInfos(pdf)
     drawTimes(pdf, training_times)
     drawPaymentInfo(pdf)
+    drawSignature(pdf)
 
     pdf.save()
     return 0
