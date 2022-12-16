@@ -5,6 +5,8 @@ import yaml
 import json
 import requests
 from reportlab.pdfgen import canvas
+import imghdr
+from reportlab.lib.units import mm
 
 profile_path = 'profile.yaml'
 fileName = 'Uebungsleiterabrechung.pdf'
@@ -287,8 +289,14 @@ def drawPaymentInfo(pdf):
 
 def drawSignature(pdf):
     signature = "./unterschrift.png"
-    pdf.drawImage(signature, 170, -460, width=120,
-                  preserveAspectRatio=True, mask='auto')
+    if is_valid_image(signature):
+        pdf.drawImage(signature, 62*mm, -62*mm, width=120,
+                      preserveAspectRatio=True, mask='auto')
+
+
+def is_valid_image(filename):
+    with open(filename, 'rb') as f:
+        return bool(imghdr.what(f))
 
 
 def main() -> int:
