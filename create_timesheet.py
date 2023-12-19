@@ -23,6 +23,7 @@ trainer_bank = {'iban': 'DE012345678', 'bank_name': '',
 hours_per_day = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 start_date = ''  # 'YYYY-MM-DDT00:00:00+0900' format
 end_date = ''  # 'YYYY-MM-DDT00:00:00+0900' format
+additional_entries = []
 
 
 def importProfile():
@@ -35,6 +36,7 @@ def importProfile():
     global trainer_bank
     global hours_per_day
     global fileName
+    global additional_entries
     profile = None
 
     with open(profile_path, "r", encoding='utf8') as stream:
@@ -51,6 +53,7 @@ def importProfile():
             trainer_bank = profile['bank']
             hours_per_day = profile['trainingsstunden']
             fileName = str(trainer_name['family_name'])+'_'+fileName
+            additional_entries = profile['additional_times']
         except yaml.YAMLError as exc:
             print(exc)
 
@@ -143,8 +146,6 @@ def dateStr(date):
 ### 'DD.MM.YYYY' or 'YYYY-MM-DD'
 # to time object strings like 'YYYY-MM-DDT00:00:00+0900'
 ###
-
-
 def dateFromStr(date_str):
     d = 'T00:00:00+0900'
     d_arr = date_str.split('.')
@@ -158,6 +159,24 @@ def dateFromStr(date_str):
                          ' make sure you wrote dates in DD.MM.YYYY or YYYY-MM-DD format')
 
 
+###
+# creates objects from global additional_entries
+###
+def additionalDays():
+    global additional_entries
+    date_format = '%Y-%m-%dT%H:%M:%S+0900'
+    
+    result = []
+    
+    for e in additional_entries:
+        new_entry=[datetime.datetime.strptime(dateFromStr(e['date']), date_format), e['duration']]
+        print('new entry:' + str(new_entry))
+        result.append(new_entry)
+        
+    return result
+     
+
+
 # returns [training times, hours] (if >0 hours)
 # this list should be ready to print
 def trainingTimes():
@@ -168,6 +187,9 @@ def trainingTimes():
     for d in cleaned_days:
         if hours_per_day[d.weekday()] > 0:
             trainings.append([d, hours_per_day[d.weekday()]])
+
+    trainings = trainings + additionalDays()
+    print(trainings)
 
     return trainings
 
