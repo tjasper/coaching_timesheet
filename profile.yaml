@@ -7,6 +7,10 @@
     0.0,
     0.0
 ]
+'additional_times': [
+  { 'duration': 1.5, 'date': 01.01.2023},
+  { 'duration': 1.5, 'date': 02.01.2023}
+]
 'vorname':            'Max'
 'nachname':           'Mustermann'
 'trainer_adresse': {
