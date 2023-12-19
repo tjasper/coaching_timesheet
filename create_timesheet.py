@@ -53,7 +53,8 @@ def importProfile():
             trainer_bank = profile['bank']
             hours_per_day = profile['trainingsstunden']
             fileName = str(trainer_name['family_name'])+'_'+fileName
-            additional_entries = profile['additional_times']
+            if 'additional_times' in profile:
+                additional_entries = profile['additional_times']
         except yaml.YAMLError as exc:
             print(exc)
 
@@ -189,7 +190,7 @@ def trainingTimes():
             trainings.append([d, hours_per_day[d.weekday()]])
 
     trainings = trainings + additionalDays()
-    print(trainings)
+    #print(trainings)
 
     return trainings
 
