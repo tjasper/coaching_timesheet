@@ -115,7 +115,8 @@ def cleanedDays(all_days_range):
         add_current = True
         # check all holidays
         for h in holidays:
-            if current_day >= h.start_datetime.replace(tzinfo=datetime.timezone.utc) and current_day.replace(tzinfo=datetime.timezone.utc) <= h.end_datetime.replace(tzinfo=datetime.timezone.utc):
+            if current_day.replace(tzinfo=datetime.timezone.utc) >= h.start_datetime.replace(tzinfo=datetime.timezone.utc) \
+                and current_day.replace(tzinfo=datetime.timezone.utc) <= h.end_datetime.replace(tzinfo=datetime.timezone.utc):
                 add_current = False
                 break
         if add_current:
